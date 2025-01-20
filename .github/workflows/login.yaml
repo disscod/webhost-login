@@ -1,12 +1,12 @@
 name: Run Login Script
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: "0 0 1 * *"  # 每月1号运行一次
-  push:
-    branches:
-      - main
+    - cron: '0 12 * * 5'  # 每周五北京时间20时运行一次
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   login:
@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Checkout 仓库代码
         uses: actions/checkout@v2
-
+        
       - name: 安装 Playwright 所需依赖
         run: |
           npx playwright install-deps
@@ -23,7 +23,7 @@ jobs:
       - name: 设置 Python 环境
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: '3.x'
 
       - name: 安装依赖
         run: |
@@ -33,6 +33,12 @@ jobs:
       - name: Install Playwright Browsers  # 安装浏览器
         run: |
           playwright install
+          
+#      - name: Set up WARP
+#        uses: fscarmen/warp-on-actions@v1.3
+#        with:
+#           stack: dual        # Optional. Support [ ipv4, ipv6, dual ]. Default is dual.
+#           mode: wireguard    # Optional. Support [ wireguard, client ]. Default is wireguard.
 
       - name: 运行登录脚本
         env:
